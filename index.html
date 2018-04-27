@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title> • ZET • </title>
+  <link rel="stylesheet" href="public/css/base.css">
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+  <script>
+    document.addEventListener('wheel', (evt) => { }, { capture: true, passive: true })
+  </script>
+  <section id="zetapp" class="container">
+    <div class="row">
+      <div id="projects" class="col-3" ng-app="application" ng-controller="explorer">
+        <h2 class="container block" ng-model="title" content-editable></h2>
+        <ul id="tree">
+          <li ng-repeat="item in tree track by item._rev" ng-if="item.type === 'project'" id="pl_{{item._id}}" class="list-group-item node-treeview1">
+            <span field="project" ng-model = "item.project" ng-keypress="itemKeyPressed(item)" ng-blur="itemBlurred(item)" content-editable>
+              <button class="destroy" ng-click="delete(item)"></button>
+            </span>
+            <ul class="subitem">
+              <li ng-repeat="subitem in tree track by subitem._rev" id="pl_{{subitem._id}}" ng-if="item.project === subitem.project && subitem.task && subitem.task !==''">
+                <span field="task" ng-model = "subitem.task" ng-keypress="itemKeyPressed(subitem)" ng-blur="itemBlurred(subitem)" content-editable>
+                  <button class="destroy" ng-click="delete(subitem)"></button>
+                </span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <div>
+          <footer class="footer"></footer>
+        </div>
+      </div>
+      <div class="col-1"></div>
+      <section id="main" class="col-8">
+        <div ng-app="application" ng-controller="itemFabric" id="aufwaende">
+          <div class="container block">
+            <!-- Search form -->
+            <div class="row">
+              <div class="col-8"></div>
+              <form class="form-inline active-blue col-4">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <input id="search" class="form-control form-control-sm ml-3 w-own" type="text" placeholder="Search" aria-label="Search" ng-keyup="search($event)">
+              </form>
+            </div>
+          </div>
+          <!-- Filter -->
+          <div class="container block">
+            <div class="row">
+              <div class="form-group col-2">
+                <button id='showclock' class="fa fa-clock-o btn btn-outline-secondary" ng-click="onOffSW()"></button>
+              </div>
+              <div class="form-group col-2">
+                <select id="project_selector" class="form-control" ng-change="filterAufwand()" ng-model="project">
+                  <option value="">Projekt</option>
+                  <option ng-repeat="project in projects track by project._rev" value="{{project.project}}" class="view">{{project.project}}</option>
+                </select>
+              </div>
+              <div class="form-group col-2">
+                <select id="task_selector" class="form-control" ng-change="filterAufwand()" ng-model="task">
+                  <option value="">Task</option>
+                  <option ng-repeat="task in tasks track by task._rev" value="{{task.task}}" class="view">{{task.task}}</option>
+                </select>
+              </div>
+              <div class="form-group col-3">
+                <input id="start" type="date" class="form-control" ng-change="filterAufwand()" ng-model="start.value">
+              </div>
+              <div class="form-group col-3">
+                <input id="end" type="date" class="form-control" ng-change="filterAufwand()" ng-model="end.value">
+              </div>
+            </div>
+          </div>
+          <!-- Trigger/Open The Modal -->
+          <div class="container block">
+            <button id="open-modal" class="btn btn-outline-primary">Erstelle Item</button>
+          </div>
+          <!--  Modal Window-->
+          <div id="new-item" class="modal">
+            <form class="modal-content container">
+              <span class="close">&times;</span>
+              <div class="row">
+                <div class="form-group col-sm">
+                  <label for="ntyp">Typ</label>
+                  <select id="ntyp" class="category form-control">
+                    <option value="project">Projekt</option>
+                    <option value="task">Task</option>
+                    <option value="aufwand">Aufwand</option>
+                  </select>
+                  <small id="ntypHelp" class="form-text text-muted">Wähle den Typ des Items aus.</small>
+                </div>
+                <div class="form-group col-sm">
+                  <label for="np">Projekt-Name</label>
+                  <div id="np" class="np input-group mb-3">
+                    <div class="input-group-prepend">
+                      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                      <div class="dropdown-menu">
+                        <a ng-repeat="project in projects track by project._rev" ng-click="projectClicked(project.project)" class="dropdown-item"
+                          field="project" href="#">
+                          {{project.project}}
+                        </a>
+                      </div>
+                    </div>
+                    <input type="text" class="newproject form-control" aria-label="Text input with dropdown button" placeholder="Projekt...">
+                  </div>
+                </div>
+                <div class="form-group col-sm">
+                  <label for="nt1">Task-Name</label>
+                  <div id="nt1" class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                      <div class="dropdown-menu">
+                        <a ng-repeat="mtask in mtasks track by $index" ng-click="taskClicked()" class="dropdown-item" field="project" href="#">
+                          {{mtask.task}}
+                        </a>
+                      </div>
+                    </div>
+                    <input type="text" class="newtask form-control" aria-label="Text input with dropdown button" placeholder="Erst Projekt wählen">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-sm">
+                  <label for="ns1">Startzeit</label>
+                  <input id="ns1" class="newstarttime form-control" type="datetime-local" ng-model="createStart.value">
+                </div>
+                <div class="form-group col-sm">
+                  <label for="ne1">Endzeit</label>
+                  <input id="ne1" class="newendtime form-control" type="datetime-local" ng-model="createEnd.value">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="nbe1">Beschreibung</label>
+                <textarea id="nbe1" class="newbeschreibung form-control" placeholder="What needs to be done?" autofocus></textarea>
+              </div>
+              </br>
+              <div class="row">
+                <div class="col-1"></div>
+                <button id="create-item" ng-click="newItemKeyPressHandler()" class="btn btn-primary col-2">Anlegen</button>
+                <div class="col-9"></div>
+              </div>
+            </form>
+          </div>
+          <table>
+            <tr>
+              <th>Projekt</th>
+              <th>Task</th>
+              <th>Start</th>
+              <th>Ende</th>
+              <th>Zeit</th>
+              <th>Beschreibung</th>
+              <th></th>
+            </tr>
+            <tr ng-repeat="item in items track by item._rev" id="li_{{item._id}}" class="view" ng-class="{'creating': item.creating}">
+              <td>
+                <label field="project" ng-dblclick="itemDblClicked(item)">{{item.project}}</label>
+                <input ident="input_{{item._id}}" placeholder="Projekt" value="{{item.project}}" field="project" class="edit" ng-keypress="itemKeyPressed(item)"
+                  ng-blur="itemBlurred(item)" />
+              </td>
+              <td>
+                <label field="task" ng-dblclick="itemDblClicked(item)">{{item.task}}</label>
+                <input ident="input_{{item._id}}" placeholder="Task" value="{{item.task}}" field="task" class="edit" ng-keypress="itemKeyPressed(item)"
+                  ng-blur="itemBlurred(item)" />
+              </td>
+              <td>
+                <label field="start" ng-dblclick="itemDblClicked(item)">{{item.lstart1}}
+                  <br/>{{item.lstart2}}
+                </label>
+                <input ident="input_{{item._id}}" ng-model="item.start" type="datetime-local" field="start" class="edit" ng-keypress="itemKeyPressed(item)"
+                  ng-blur="itemBlurred(item)" />
+              </td>
+              <td>
+                <label field="end" ng-dblclick="itemDblClicked(item)">{{item.lend1}}
+                  <br/>{{item.lend2}}</label>
+                <input ident="input_{{item._id}}" ng-model="item.end" type="datetime-local" field="end" class="edit" ng-keypress="itemKeyPressed(item)"
+                  ng-blur="itemBlurred(item)" />
+              </td>
+              <td>
+                <label field="time" ng-dblclick="itemDblClicked(item)">
+                  {{item.time}}
+                </label>
+                <input ident="input_{{item._id}}" ng-model="item.time" step="1"  field="time" class="edit" ng-keypress="itemKeyPressed(item)"
+                  ng-blur="itemBlurred(item)" />
+              </td>
+              <td>
+                <label field="comment" ng-dblclick="itemDblClicked(item)">{{item.comment}}</label>
+                <textarea ident="input_{{item._id}}" placeholder="Beschreibung" value="{{item.comment}}" field="comment" class="edit" ng-keypress="itemKeyPressed(item)"
+                  ng-blur="itemBlurred(item)">{{item.comment}}</textarea>
+              </td>
+              <td>
+                <button class="destroy" ng-click="delete(item)"></button>
+              </td>
+            </tr>
+            <footer class="footer"></footer>
+          </table>
+        </div>
+      </section>
+    </div>
+  </section>
+  <footer id="info">
+    <p>Doppel-Klicken um einen Aufwand zu bearbeiten.</p>
+  </footer>
+  <script src="./node_modules/pouchdb/dist/pouchdb.js"></script>
+  <script src="controller/script.js"></script>
+  <script src="controller/item_fabric.js"></script>
+  <script src="controller/helper.js"></script>
+  <script src="controller/queries.js"></script>
+  <script src="public/scripts/tree.js"></script>
+</body>
+
+</html>

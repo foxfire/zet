@@ -1,0 +1,10 @@
+{
+  "globals": {
+      "$": false,
+      "require": false,
+      "PouchDB": false
+  },
+  "options":{
+    "esversion":6
+  }
+}

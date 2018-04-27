@@ -1,0 +1,21 @@
+.active-cyan-3 input[type=text] {
+    border: 1px solid #4dd0e1;
+    box-shadow: 0 0 0 1px #4dd0e1;
+}
+
+.active-cyan .fa, .active-cyan-2 .fa, .active-cyan-3 .fa, .active-cyan-4 .fa {
+    color: #4dd0e1;
+}
+
+.active-blue-3 input[type=text] {
+    border: 1px solid #007bff;
+    box-shadow: 0 0 0 1px #007bff;
+}
+
+.active-blue .fa, .active-cyan-2 .fa, .active-cyan-3 .fa, .active-cyan-4 .fa {
+    color: #007bff;
+}
+
+.w-own{
+   width: calc(100% - 27px) !important;
+}

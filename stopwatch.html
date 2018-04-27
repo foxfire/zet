@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title> • ZET • </title>
+  <link rel="stylesheet" href="public/css/base2.css">
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div id="stopwatch" class="container" ng-app="application" ng-controller="itemFabric">
+    <div ng-view></div>
+    <div class="row">
+      <div class="stopwatches container col-8">
+        <div class="stopwatch row" ng-repeat="item in items | limitTo:10 track by $index" id="li_{{item._id}}" class="view">
+          <div class="col-1">
+            <i ng-click="timer.play(item)" class="fa fa-play-circle"></i>
+          </div>
+          <div class="form-group col-4">
+            <!-- <label for="np">Projekt-Name</label> -->
+            <div id="np" class="np input-group mb-3">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                <div class="dropdown-menu">
+                  <a ng-repeat="project in projects track by project._rev" ng-click="projectClicked(project.project, $parent.$index)" class="dropdown-item"
+                    field="project" href="#">
+                    {{project.project}}
+                  </a>
+                </div>
+              </div>
+              <input ng-model="item.project" type="text" class="newproject form-control" aria-label="Text input with dropdown button"
+                placeholder="Projekt...">
+            </div>
+          </div>
+          <div class="form-group col-4">
+            <!-- <label for="nt1">Task-Name</label> -->
+            <div id="nt1" class="input-group mb-3">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                <div class="dropdown-menu">
+                  <a ng-repeat="mtask in getFeeder($index)" ng-click="changeSW(item)" class="dropdown-item" field="project" href="#">
+                    {{mtask.task}}
+                  </a>
+                </div>
+              </div>
+              <input ng-model="item.task" type="text" class="newtask form-control" aria-label="Text input with dropdown button" placeholder="Erst Projekt wählen">
+            </div>
+          </div>
+          <div class="col-2">
+            <span field="time" ng-keypress="itemKeyPressed(item)" ng-blur="itemBlurred(item)" ng-model ="item.time" content-editable>
+          </div>
+          <div class="col-1">
+            <button class="destroy" ng-click="delete(item)"></button>
+          </div>
+        </div>
+      </div>
+      <div class="container col-4">
+        <div class="row">
+          <div class="col-3">
+            <i id="create-item" ng-click="timer.newStopWatch()" class="fa fa-plus-circle"></i>
+          </div>
+          <div class="col-3">
+            <i class="fa fa-pause-circle" ng-click="timer.pause()"></i>
+          </div>
+          <div class="col-3">
+            <i class="fa fa-stop-circle" ng-click="timer.stop()"></i>
+          </div>
+          <div class="col-3" ng-click="minMaxSW(isBig = !isBig)">
+            <i class="fa fa-angle-down" ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./node_modules/pouchdb/dist/pouchdb.js"></script>
+  <script src="controller/script.js"></script>
+  <script src="controller/item_fabric.js"></script>
+  <script src="controller/helper.js"></script>
+  <script src="controller/queries.js"></script>
+  <script src="public/scripts/tree.js"></script>
+</body>
+
+</html>

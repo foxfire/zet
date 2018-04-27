@@ -1,0 +1,13 @@
+//overwrites
+@import "overwrites/table.scss";
+@import "general.scss";
+
+//systemteile
+@import "main_window.scss";
+
+//Teilfunktionen
+@import "partials/modal.scss";
+@import "partials/block.scss";
+@import "partials/search.scss";
+@import "partials/tree.scss";
+@import "partials/projects.scss";

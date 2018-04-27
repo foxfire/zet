@@ -1,0 +1,30 @@
+html {
+  overflow: hidden; }
+
+i.fa {
+  font-size: 2.4em;
+  text-align: center;
+  width: 100%; }
+
+#stopwatch {
+  max-width: 100%;
+  margin: 0 auto 0 auto; }
+  #stopwatch > .row {
+    margin-top: 5px; }
+
+.stopwatch > div {
+  height: 100%;
+  margin: 0; }
+
+.timer {
+  display: none;
+  width: 100% !important; }
+
+.stopwatches .editing .edit {
+  display: block;
+  width: 95%;
+  padding: 0;
+  margin: 0; }
+
+.stopwatches .editing label {
+  display: none !important; }
