@@ -27,7 +27,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		value: new Date(moment().format("YYYY-MM-DDThh:mm"))
 	};
 
-	//Assures that Angular gets valid date-objects for date input fields
+	/*Assures that Angular gets valid date-objects for date input fields*/
 	$scope.isBig = false; 
 
 	let currentEditing;
@@ -37,9 +37,23 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 				docs.start = new Date(docs.start);
 				docs.end = new Date(docs.end);
 				if(docs.time) {
-					if(moment(docs.time, "HH:mm:ss").isValid()){
-						docs.time = moment(docs.time, "HH:mm:ss").format("HH:mm:ss");
+					if(	moment(docs.time, "HH:mm:ss").isValid() || 
+						moment.duration(docs.time, "HH:mm:ss").format("HH:mm:ss") !== "00"){
+
+						/*If hours are greater 1000 we need this regex*/
+						docs.time = docs.time.replace(/[^:.0-9]/g,'');
+						
+						/*
+						For times < 24 hours moment should handle the conversion. If time exceeds 24 hours
+						duration is needed, since moment resets at 24 hours.
+						*/
+						if(moment.duration(docs.time, "HH:mm:ss").asSeconds() < 86400){
+							docs.time =	moment(docs.time, "HH:mm:ss").format("HH:mm:ss");
+						}else{
+							docs.time =	moment.duration(docs.time, "HH:mm:ss").format("HH:mm:ss").replace(/[^:.0-9]/g,'');
+						}
 					}else{
+						/*If the input isn´t a valid time the last value from DB gets restored*/
 						db.get(docs._id).then((doc) => {
 							docs.time = doc.time;
 						});
@@ -49,6 +63,11 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 			return docs;
 	}
 
+	/* 
+	Is used to convert a variety of Userinputs into valid time formats for stopwatch before putting into Database.
+	It also asserts the given values. The convert function first checks if the given array has 1 or n entrys, because
+	the foor loop process them differently.
+	*/
 	function convert (docs) {
 		return new Promise((resolve, reject) => {
 			if(docs.length){
@@ -56,7 +75,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 					converter(docs[k]);
 				}
 				Promise.all(docs)
-				.then((dataAll) => { // jshint ignore:line
+				.then((dataAll) => { /* jshint ignore:line */
 					resolve(dataAll);
 				});
 			}else{
@@ -65,7 +84,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		});
 	}
 
-	//Find all Projects
+	/*Find all Projects*/
 	$scope.findProjcts = () => {
 		db.find(findProjects())
 			.then(function (doc) {
@@ -90,22 +109,18 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		});
 	};
 
-	//Updates normally affect the whole UI. This function only updates locally for frequently changing stuff
-	//like stopwatch-timer.
+	/*
+	Updates normally affect the whole UI. This function only updates locally for frequently changing stuff
+	like stopwatch-timer.
+	*/
 	$scope.getUpdateObject = (orig, current) => {
 		//list for properties where UI should not be redrawn 
-		let notUpdate =['time','_rev', 'lend2','contime'];
+		let notUpdate =['time','_rev', 'lend2'];
 		let switch1 = true;
 		/* jshint ignore:start */
 		async function iterate() {
 			
 			for (let prop in orig) {
-
-				if (await prop === "start") {
-					//console.log(current)
-					//Eventuell Datumsprüfung
-					//await $scope.convert(current);
-				}
 
 				let f1 = await orig[prop].toString().trim();
 				let f2 = await current[prop].toString().trim();
@@ -255,18 +270,18 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 	//After checking for exisitng item it saves it with this function
 	$scope.saveItem = (item) => {
 		async function f1() {
-			let data = await convert(item);
-			console.log(data);
-			$timeout(() => {
-				$('#tree').treed();
+			if (item.type === "aufwand"){
+				item = await convert(item);
+			}
 			
-			db.put(data)
-			.then((result) => {
-				console.log('Successfully posted a item!');
-			}).catch((err) => {
-				console.log('I am not happy because of: ' + err);
-			});
-			}, 300);
+			$timeout(() => {
+				db.put(item)
+				.then((result) => {
+					console.log('Successfully posted a item!');
+				}).catch((err) => {
+					console.log('I am not happy because of: ' + err);
+				});
+			}, 100);
 		}
 		f1();
 	};
@@ -277,7 +292,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		}).then(() => {
 			db.remove(item)
 			.then((result) => {
-				console.log('Successfully posted a item!');
+				console.log('Successfully removed a item!');
 			}).catch((err) => {
 				console.log('I am not happy because of: ' + err);
 			});
@@ -393,7 +408,9 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 			//Writing the actual Seconds of the timer into the view
 			st++;
 
-			$scope.items[params.id].time =  moment("2015-01-01").startOf('day').seconds(st).format('HH:mm:ss');
+			$scope.items[params.id].time = Math.floor(moment.duration(st,'seconds').asHours()) + ':' 
+			+ moment.duration(st,'seconds').minutes() + ':' 
+			+ moment.duration(st,'seconds').seconds();
 
 			if (params.query && params.query !== "") {
 				//$scope.items[params.id] = upsert($scope.items[params.id]);
@@ -406,7 +423,8 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		//and also at the same writing the new data into the view.
 		this.play = (item) => {
 			$scope.timer.RemoveTimer();
-			st = moment.duration(item.time).asSeconds();
+			console.log(converter(item).time)
+			st = moment.duration(converter(item).time).asSeconds();
 			let id = $scope.items.findIndex(arr => arr._id == item._id);
 			let params = { 
 				id: $scope.items.findIndex(arr => arr._id == item._id),

@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "angular": "^1.6.9",
+    "angular-content-editable": "^1.2.3",
     "angular-route": "^1.6.9",
     "bootstrap": "^4.0.0",
     "font-awesome": "^4.7.0",

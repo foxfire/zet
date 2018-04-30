@@ -148,8 +148,8 @@
             <tr>
               <th>Projekt</th>
               <th>Task</th>
-              <th>Start</th>
-              <th>Ende</th>
+              <!-- <th>Start</th>
+              <th>Ende</th> -->
               <th>Zeit</th>
               <th>Beschreibung</th>
               <th></th>
@@ -165,7 +165,7 @@
                 <input ident="input_{{item._id}}" placeholder="Task" value="{{item.task}}" field="task" class="edit" ng-keypress="itemKeyPressed(item)"
                   ng-blur="itemBlurred(item)" />
               </td>
-              <td>
+              <!-- <td>
                 <label field="start" ng-dblclick="itemDblClicked(item)">{{item.lstart1}}
                   <br/>{{item.lstart2}}
                 </label>
@@ -177,7 +177,7 @@
                   <br/>{{item.lend2}}</label>
                 <input ident="input_{{item._id}}" ng-model="item.end" type="datetime-local" field="end" class="edit" ng-keypress="itemKeyPressed(item)"
                   ng-blur="itemBlurred(item)" />
-              </td>
+              </td> -->
               <td>
                 <label field="time" ng-dblclick="itemDblClicked(item)">
                   {{item.time}}
