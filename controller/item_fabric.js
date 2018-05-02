@@ -94,7 +94,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 			});
 	};
 
-	//Find all expenditures from today.
+	/* Find all expenditures from today. */
 	$scope.findAufwand = () => {
 		$document.ready(function () {
 			db.find(aufwandQuery())
@@ -143,7 +143,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 			$scope.findAufwand();
 		}
 	};
-
+	/** Checks for changes in scope and only updates the specific part of the ui that has changed. */
 	$scope.updateScopeVars = (change) => {
 		let id = $scope.items.findIndex(arr => arr._id == change.doc._id);
 		if (id !== -1 && !change.deleted){
@@ -153,7 +153,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		}
 	};
 
-	//Find all tasks in project
+	/* Find all tasks in project */
 	$scope.findTaskProject = () => {
 		db.find(findTasksFromProject())
 			.then(function (doc) {
@@ -314,6 +314,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 	//Checks for enter keypresses and triggers blur
 	$scope.itemKeyPressed = function ($event) {
 		let inputEdit;
+		
 		if (event.keyCode === ENTER_KEY) {
 			inputEdit = event.currentTarget;
 			currentEditing = "";
@@ -335,7 +336,6 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		$scope.addItem(item);
 	};
 
-
 	//Search
 	$scope.search = ($event) => {
 		db.find(findInComments(event.target.value))
@@ -354,7 +354,7 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		$scope.removeItem(item);
 	};
 
-	//Select value for "project" in ComboBox from anchor list
+	//Select value for "project" in comboBox from anchor list
 	$scope.projectClicked = (item, i, $event) => {
 		ListenerComboBox(event);
 		$scope.findTaskProjectModal(item);
@@ -423,7 +423,6 @@ app.controller('itemFabric', function ($scope, $timeout, $filter, $interval, $do
 		//and also at the same writing the new data into the view.
 		this.play = (item) => {
 			$scope.timer.RemoveTimer();
-			console.log(converter(item).time)
 			st = moment.duration(converter(item).time).asSeconds();
 			let id = $scope.items.findIndex(arr => arr._id == item._id);
 			let params = { 

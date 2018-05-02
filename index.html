@@ -16,7 +16,7 @@
   <section id="zetapp" class="container">
     <div class="row">
       <div id="projects" class="col-3" ng-app="application" ng-controller="explorer">
-        <h2 class="container block" ng-model="title" content-editable></h2>
+        <h2 class="container block">Projekte</h2>
         <ul id="tree">
           <li ng-repeat="item in tree track by item._rev" ng-if="item.type === 'project'" id="pl_{{item._id}}" class="list-group-item node-treeview1">
             <span field="project" ng-model = "item.project" ng-keypress="itemKeyPressed(item)" ng-blur="itemBlurred(item)" content-editable>
@@ -187,7 +187,7 @@
               </td>
               <td>
                 <label field="comment" ng-dblclick="itemDblClicked(item)">{{item.comment}}</label>
-                <textarea ident="input_{{item._id}}" placeholder="Beschreibung" value="{{item.comment}}" field="comment" class="edit" ng-keypress="itemKeyPressed(item)"
+                <textarea ident="input_{{item._id}}" placeholder="Beschreibung" ng-model="item.comment" field="comment" class="edit" ng-keypress="itemKeyPressed(item)"
                   ng-blur="itemBlurred(item)">{{item.comment}}</textarea>
               </td>
               <td>
