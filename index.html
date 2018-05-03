@@ -15,7 +15,7 @@
   </script>
   <section id="zetapp" class="container">
     <div class="row">
-      <div id="projects" class="col-3" ng-app="application" ng-controller="explorer">
+      <div id="projects" class="col-3" ng-app="app.main" ng-controller="explorer">
         <h2 class="container block">Projekte</h2>
         <ul id="tree">
           <li ng-repeat="item in tree track by item._rev" ng-if="item.type === 'project'" id="pl_{{item._id}}" class="list-group-item node-treeview1">
@@ -37,7 +37,7 @@
       </div>
       <div class="col-1"></div>
       <section id="main" class="col-8">
-        <div ng-app="application" ng-controller="itemFabric" id="aufwaende">
+        <div ng-app="app.main" ng-controller="mainApp" id="aufwaende">
           <div class="container block">
             <!-- Search form -->
             <div class="row">
@@ -205,7 +205,8 @@
   </footer>
   <script src="./node_modules/pouchdb/dist/pouchdb.js"></script>
   <script src="controller/script.js"></script>
-  <script src="controller/item_fabric.js"></script>
+  <script src="controller/app.js"></script>
+  <script src="controller/time_fabric.js"></script>
   <script src="controller/helper.js"></script>
   <script src="controller/queries.js"></script>
   <script src="public/scripts/tree.js"></script>

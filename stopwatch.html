@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <div id="stopwatch" class="container" ng-app="application" ng-controller="itemFabric">
+  <div id="stopwatch" class="container" ng-app="app.main" ng-controller="mainApp">
     <div ng-view></div>
     <div class="row">
       <div class="stopwatches container col-8">
@@ -76,7 +76,8 @@
   </div>
   <script src="./node_modules/pouchdb/dist/pouchdb.js"></script>
   <script src="controller/script.js"></script>
-  <script src="controller/item_fabric.js"></script>
+  <script src="controller/app.js"></script>
+  <script src="controller/time_fabric.js"></script>
   <script src="controller/helper.js"></script>
   <script src="controller/queries.js"></script>
   <script src="public/scripts/tree.js"></script>
