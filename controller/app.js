@@ -1,7 +1,8 @@
 require('./controller/script.js');
 (function() {
   'use strict';
-  // the application code is shared by the mainwindow and the stoppwatch-window
+  /* the application code is shared by the
+  mainwindow and the stoppwatch-window */
   angular
     .module('app.main', ['angular-content-editable'])
     .config(function(contentEditableProvider) {
@@ -14,6 +15,7 @@ require('./controller/script.js');
 
   mainApp.$inject = ['timeFactory', '$scope', '$timeout',
   '$filter', '$interval', '$document'];
+
   /**
    * @param {component} timeFactory component with "time to date"-converter
    * @param {object} $scope local refactoring
